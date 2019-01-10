@@ -1,9 +1,0 @@
-tar xvf zabbix.tar.gz
-
-cd zabbix
-
-./configure
-
-make
- 
-make install

@@ -1,0 +1,26 @@
+## 使用koan通过cobbler自动化重装系统
+
+koan是kickstart-over-a-network的缩写，它是cobbler的客户端帮助程序。运行koan时，它会从远端的cobbler server上获取安装信息，然后根据获取的安装信息进行系统自动化安装。
+
+### 1. 在客户端安装koan。一定是在需要重装系统的机器上面安装koan。
+
+	yum install koan
+
+### 2. 执行列出可使用的系统命令
+
+	koan --server=xxxx --list=profiles #列出可使用的profile
+
+### 3. 重装系统
+	
+	koan --replace-self --server=xxxx --profile=CentOS7-x86_64
+
+	koan --replace-self --server=xxxx --profile=CentOS6-x86_64
+
+### 4. 重启系统开始自动化安装进程
+
+	reboot
+
+
+### 5. 修改安装引导界面提示符
+
+	vim /ect/cobbler/pxe/pxedefault.template

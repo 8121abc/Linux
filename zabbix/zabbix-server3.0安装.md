@@ -61,7 +61,7 @@ Zabbix是一个基于WEB界面的提供分布式系统监视以及网络监视�
 	systemctl enable mariadb
 	初始化数据库
 	mysql_secure_installation
-[图片](https://images2018.cnblogs.com/blog/862626/201807/862626-20180706145937194-1806672696.png)
+![图片](https://images2018.cnblogs.com/blog/862626/201807/862626-20180706145937194-1806672696.png)
 
 ## 四、创建zabbix数据库以及zabbix账号
 	[root@localhost ~]# mysql -uroot -p

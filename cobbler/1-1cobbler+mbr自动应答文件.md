@@ -1,4 +1,4 @@
-** mbr自动应答文件 **
+### mbr自动应答文件：
 
 	lang en_US
 	keyboard us

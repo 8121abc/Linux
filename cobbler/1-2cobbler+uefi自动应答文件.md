@@ -28,6 +28,11 @@ UEFI启动配置文件：
 		part / --fstype="xfs" --size=10240
 		part /boot --fstype="ext4" --size=1024
 		
+		%post
+		systemctl stop postfix.service
+		%end		
+
+
 		%pre
 		parted -s /dev/sda mklabel gpt
 		%end

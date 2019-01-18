@@ -1,0 +1,35 @@
+# 安卓云常用命令：
+#### 安装命令
+	ansible-playbook -i hosts site.yml
+
+#### 安装扩展插件命令
+因为在执行ansible的时候把该命令注释掉了，所以等ansible跑完之后再运行此命令来安装vbox的扩展插件。如果不安装扩展插件，即使模拟器系统启动成功，多开器也无法连接。
+
+	vboxmanage extpack install /tmp/Oracle_VM_VirtualBox_Extension_Pack-5.0.28-111378.vbox-extpack
+
+
+
+#### 安装过程中遇到错误：
+
+1. 首先查看一下ansible-playbook的报错信息，根据提示信息基本就能排错。
+
+2. ansible-playbook如果能顺利通过，但是模拟器启动失败，可查看日志文件，然后排错。
+
+		systemctl status vboxagent #查看vboxagent的服务状态，如果没有启动，请启动
+		systemctl start vboxagent
+		cat /var/log/vboxagent.log #根据错误信息排错
+		/etc/init.d/vboxagent start/status/stop
+
+3. 导入镜像失败时，提示需要同意协议，可能时因为版本的问题，所以才需要同意许可。导入镜像的时候需要添加两个参数选项才可以通过。
+		
+		vboxmanage import --vsys 0 --eula accept /tmp/vbox-androidx86.ova
+
+
+4. 修改模拟器的3D加速
+	![错误提示](https://i.imgur.com/OieuAxu.jpg)
+
+		VBoxManage modifyvm trunkey-x86 --accelerate3d off
+5. 百度连接的相关文件
+	
+		链接：https://pan.baidu.com/s/1oSbIa2s1rQTZgsVpmoO12A 
+		提取码：nrc0

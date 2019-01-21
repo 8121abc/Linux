@@ -1,0 +1,9 @@
+## snmp服务安装
+安装SNMP一般安装两个套件 net-snmp net-snmp-utils
+	
+	yum install net-snmp net-snmp-utils
+安装完毕，修改配置文件
+
+	cat /etc/snmp/snmpd.conf
+	rocommunity tengyao 172.16.3.79 #IP地址为允许连接SNMP的IP地址，相当于用户名。tengyao 是SNMP的网络名称，相当于密码。
+	

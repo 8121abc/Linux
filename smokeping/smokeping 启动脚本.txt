@@ -1,0 +1,115 @@
+<pre>
+cat smokeping.sh
+
+#!/bin/bash
+#chkconfig: 2345 88 06
+#Description: smokeping start script
+#Author Tony lin
+
+. /etc/init.d/functions
+
+Smokeping_Path="/usr/local/smokeping"
+Smokeping_Bin="$Smokeping_Path/bin/smokeping"
+Smokeping_Log="/var/log/smokeping.log"
+Smokeping_Lock="/var/lock/subsys/smokeping"
+#start service smokeping
+function start() {
+    echo -n "Starting smokeping"
+    $Smokeping_Bin --logfile=$Smokeping_Log 2>&1 &
+    ### create the lock file###
+    touch $Smokeping_Lock
+    action "Smokeping startup" /bin/true
+}
+
+#stop smokeping
+function stop() {
+    echo -n "Stopping smokeping"
+    kill -9 `ps aux|grep "$Smokeping_Bin"|egrep -v grep|awk '{print $2}'` >/dev/null 2>&1
+    ###Now,delete the lock file###
+    rm -f $Smokeping_Lock
+    action "stop smokeping" /bin/true
+}
+
+#show status about smokeping
+function status() {
+    NUM=`ps -aux|grep "$Smokeping_Bin"|grep -v grep|wc -l`
+    if [ $NUM -eq 0 ]
+    then
+        echo "Smokeping is not run."
+    else
+        echo "Smokeping is running now!"
+    fi
+}
+
+
+case "$1" in
+#!/bin/bash
+
+#chkconfig: 2345 88 06
+#Description: smokeping start script
+#Author Tony lin
+
+. /etc/init.d/functions
+
+Smokeping_Path="/usr/local/smokeping"
+Smokeping_Bin="$Smokeping_Path/bin/smokeping"
+Smokeping_Log="/var/log/smokeping.log"
+Smokeping_Lock="/var/lock/subsys/smokeping"
+#start service smokeping
+function start() {
+    echo -n "Starting smokeping"
+    $Smokeping_Bin --logfile=$Smokeping_Log 2>&1 &
+    ### create the lock file###
+    touch $Smokeping_Lock
+    action "Smokeping startup" /bin/true
+}
+
+#stop smokeping
+function stop() {
+    echo -n "Stopping smokeping"
+    kill -9 `ps aux|grep "$Smokeping_Bin"|egrep -v grep|awk '{print $2}'` >/dev/null 2>&1
+    ###Now,delete the lock file###
+    rm -f $Smokeping_Lock
+    action "stop smokeping" /bin/true
+}
+
+#show status about smokeping
+function status() {
+    NUM=`ps -aux|grep "$Smokeping_Bin"|grep -v grep|wc -l`
+    if [ $NUM -eq 0 ]
+    then
+        echo "Smokeping is not run."
+    else
+        echo "Smokeping is running now!"
+    fi
+}
+
+
+case "$1" in
+
+    start)
+        start
+        ;;
+    stop)
+        stop
+        ;;
+    restart|reload)
+        stop
+        start
+        ;;
+    status)
+        status
+        ;;
+    *)
+        echo $"Usage:$0 {start|stop|restart|reload|status}"
+        exit 1
+esac
+exit 0
+</pre>
+
+添加smokeping服务至系统管理
+
+	chmod 755 smokeping
+	chkconfig --add smokeping
+	chkoncifg smokeping on
+

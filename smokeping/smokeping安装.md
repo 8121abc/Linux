@@ -159,3 +159,15 @@
         $val = 1e-6 if $val =~ /nan/i;
         $max = { $tasks[0][1] => $val * 1.5 };
     }
+
+## 五、注意事项
+1. 在/usr/local/smokeping/etc/config中添加;
+
+2. smokeping就这点不好，添加节点不能在前台Web页面添加，一定要在后台的配置文件中添加;
+
+3. 修改/usr/local/smokeping/etc/config后，必须重启smokeping程序，配置才会生效;
+
+4. smokeping 会根据配置文件config 在/usr/local/smokeping/data 之下添加moniter文件夹，其下包含website子文件夹;
+
+5. 用vmware workstation的虚拟机测试有一点好处，workstation下的虚拟网卡可以设置出入的丢包率，适合smokeping做丢包测试, 经过测试smokeping检测出的丢包率与vmware worksation虚拟网卡设置的丢包率基本相同,也就是说smokeping 能够反应网络的真实状况。
+添加监控节点示例：注意+是第一层，++是第二层，+++ 是第三层

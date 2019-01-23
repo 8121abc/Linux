@@ -4,7 +4,7 @@
 	yum install http://rpms.remirepo.net/enterprise/remi-release-7.rpm
     yum install yum-utils
 	yum-config-manager --enable remi-php70
-	yum install php70w-gd php70w-curl php70w-cli php70w-mysql php70w-xml php70w-mbstring #官方推荐的php扩展模块
+	yum install php-gd php-curl php-cli php-mysql php-xml php-mbstring #官方推荐的php扩展模块，系统自动加载相应的扩展模块，不用指定php70-gd或者php70w-gd
 
 ## 安装mariadb10.1
 	cat /etc/yum.repos.d/mariadb.repo
@@ -13,6 +13,7 @@
 	baseurl = http://yum.mariadb.org/10.1/centos7-amd64
 	gpgkey=https://yum.mariadb.org/RPM-GPG-KEY-MariaDB
 	gpgcheck=1
+	安装数据库
 	yum info Mariadb
 	yum install MariaDB-server
 

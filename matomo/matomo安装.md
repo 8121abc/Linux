@@ -15,3 +15,10 @@
 	gpgcheck=1
 	yum info Mariadb
 	yum install MariaDB-server
+
+## 创建相应的数据库
+	mysql -uroot -p
+	create database piwik;
+	create user 'piwik'@'localhost' identified by '123456';
+	grant select,insert,update,delete,create,drop,alter,create temporary tables,lock tables on piwik.* to 'piwik'@'localhost';
+	grant file on *.* to 'piwik'@'localhost'

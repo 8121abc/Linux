@@ -317,3 +317,4 @@ history命令历史
 最快的方式 56升级到安装PHP71
 yum install yum-plugin-replace
 yum replace php56w-common --replace-with=php71w-common
+必须安装php70以上版本，否则画图出不来。

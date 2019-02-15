@@ -22,3 +22,8 @@
 	create user 'piwik'@'localhost' identified by '123456';
 	grant select,insert,update,delete,create,drop,alter,create temporary tables,lock tables on piwik.* to 'piwik'@'localhost';
 	grant file on *.* to 'piwik'@'localhost'
+
+90  yum -y install php php-opcache
+   91  ls
+   92  yum -y install php-mysqlnd php-pdo
+   93  yum -y install php-gd php-ldap php-odbc php-pear php-xml php-xmlrpc php-mbstring php-soap curl curl-devel

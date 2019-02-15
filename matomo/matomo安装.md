@@ -24,6 +24,12 @@
 	grant select,insert,update,delete,create,drop,alter,create temporary tables,lock tables on piwik.* to 'piwik'@'localhost';
 	grant file on *.* to 'piwik'@'localhost'
 
+<<<<<<< HEAD
+90  yum -y install php php-opcache
+   91  ls
+   92  yum -y install php-mysqlnd php-pdo
+   93  yum -y install php-gd php-ldap php-odbc php-pear php-xml php-xmlrpc php-mbstring php-soap curl curl-devel
+=======
 
 
 用yum快速搭建LAMP平台
@@ -318,3 +324,4 @@ history命令历史
 yum install yum-plugin-replace
 yum replace php56w-common --replace-with=php71w-common
 必须安装php70以上版本，否则画图出不来。
+>>>>>>> 13509c3c8283c33c260779f687909a25f0df6f20

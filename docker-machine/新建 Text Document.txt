@@ -1,0 +1,9 @@
+解决办法：
+
+1. 根据提示去运行“sudo /sbin/vboxconfig”
+
+2. 继续根据报错提示，安装 kernel-devel-3.10.0-862.el7.x86_64  // 根据报错提示安装
+
+yum -y install kernel-devel-3.10.0-862.el7.x86_64
+
+2. 安装完成后再运行“sudo /sbin/vboxconfig”，成功。

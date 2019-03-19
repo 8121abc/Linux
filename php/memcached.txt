@@ -36,3 +36,170 @@ make install
 php.ini加载  extension=memcached.so
 
 重启php 查看phpinfo()是否已经正常加载memcached
+
+LNMP（Linux+Nginx+PHP+MySQL）生产源码部署实战
+ 
+     日常工作中，部署Nginx+PHP是非常普通的一个场景，如果有一个最佳实践，每次可以直接复制粘贴就好了。本文正是完全生产实践的方式。Nginx和PHP均推荐使用源码安装，MySQL推荐直接使用官方提供编译好的二进制文件，性能是最佳的，除非你可以非常专业的进行MySQL编译的定制。
+ 
+1.源码安装Nginx
+依赖软件包安装。
+[root@linux-node1 ~]# rpm -ivh http://mirrors.aliyun.com/epel/epel-release-latest-7.noarch.rpm 
+[root@linux-node1 ~]# yum install -y gcc glibc gcc-c++ pcre-devel openssl-devel
+创建www用户，用于启动Nginx
+[root@linux-node1 src]# useradd -s /sbin/nologin -M www
+Nginx源码编译安装
+[root@linux-node1 ~]# cd /usr/local/src
+[root@linux-node1 src]# wget http://nginx.org/download/nginx-1.14.2.tar.gz
+[root@linux-node1 src]# tar zxf nginx-1.14.2.tar.gz 
+[root@linux-node1 src]# cd nginx-1.14.2
+[root@linux-node1 nginx-1.14.2]#./configure --prefix=/usr/local/nginx-1.14.2 \
+--user=www --group=www \
+--with-http_ssl_module --with-stream \
+--with-http_stub_status_module --with-file-aio
+[root@linux-node1 nginx-1.14.2]# make && make install
+2.测试配置并启动Nginx
+[root@linux-node1 ~]# ln -s /usr/local/nginx-1.14.2/ /usr/local/nginx
+[root@linux-node1 ~]# /usr/local/nginx/sbin/nginx -t
+nginx: the configuration file /usr/local/nginx-1.14.2/conf/nginx.conf syntax is ok
+nginx: configuration file /usr/local/nginx-1.14.2/conf/nginx.conf test is successful
+[root@linux-node1 ~]# /usr/local/nginx/sbin/nginx
+查看Nginx启动状态
+[root@linux-node1 ~]# netstat –ntlp | grep 80
+ 
+3.源码安装PHP（FPM）
+首先，我们需要将PHP依赖的软件包都安装上。
+[root@linux-node1 ~]# yum install -y gcc gcc-c++ glibc make autoconf \
+libjpeg-turbo-devel libpng-devel mhash-devel \
+freetype-devel libxml2-devel  zlib-devel \
+libcurl-devel openssl-devel swig libmcrypt-devel 
+
+4.下载软件包
+[root@linux-node1 ~]# cd /usr/local/src
+[root@linux-node1 src]# wget http://120.52.51.16/cn2.php.net/distributions/php-5.6.39.tar.gz
+[root@linux-node1 src]# tar zxf php-5.6.39.tar.gz
+[root@linux-node1 src]# cd php-5.6.39
+
+5.编译软件包
+[root@linux-node1 php-5.6.39]#./configure --prefix=/usr/local/php-5.6.39 --with-mysql \
+--with-jpeg-dir --with-png-dir --with-curl --with-gd \
+--with-zlib --enable-xml --with-libxml-dir --enable-bcmath \
+--enable-sysvsem --enable-mbregex --with-openssl \
+--enable-mbstring  --enable-gd-native-ttf --enable-sockets \
+--enable-shmop --enable-opcache --disable-debug \
+--with-xmlrpc --enable-zip --enable-soap --enable-zip --enable-fpm \
+--with-fpm-user=www --with-fpm-group=www --with-freetype-dir \
+--with-mcrypt --with-mhash --enable-inline-optimization
+[root@linux-node1 php-5.6.39]# make && make install
+
+6.设置php配置文件和启动脚本
+[root@linux-node1 php-5.6.39]# ln -s /usr/local/php-5.6.39/ /usr/local/php
+[root@linux-node1 php-5.6.39]# cp php.ini-production /usr/local/php/lib/php.ini
+[root@linux-node1 php-5.6.39]# cp sapi/fpm/init.d.php-fpm /etc/init.d/php-fpm
+[root@linux-node1 php-5.6.39]# chmod +x /etc/init.d/php-fpm 
+
+fpm配置文件
+[root@linux-node1 php-5.6.39]# cd /usr/local/php/etc/	
+[root@linux-node1 etc]# cp php-fpm.conf.default php-fpm.conf
+[root@linux-node1 etc]# /etc/init.d/php-fpm start
+Starting php-fpm  done
+默认情况下php-fpm会监听在本地127.0.0.1的9000端口，你也可以调整php-fpm.conf设置为监听sock文件。
+ 
+7.配置Nginx和PHP的连接
+[root@linux-node1 ~]# cd /usr/local/nginx/conf/
+[root@linux-node1 conf]# vim nginx.conf
+#去掉以下内容注释并修改
+        location ~ \.php$ {
+            #root           html;
+            fastcgi_pass   127.0.0.1:9000;
+            fastcgi_index  index.php;
+            #fastcgi_param  SCRIPT_FILENAME  /scripts$fastcgi_script_name;
+            include        fastcgi.conf;  #注意修改
+        }
+重载Nginx配置
+[root@linux-node1 conf]# /usr/local/nginx/sbin/nginx -t
+nginx: the configuration file /usr/local/nginx-1.14.2/conf/nginx.conf syntax is ok
+nginx: configuration file /usr/local/nginx-1.14.2/conf/nginx.conf test is successful
+[root@linux-node1 conf]# /usr/local/nginx/sbin/nginx -s reload
+
+测试PHP安装
+[root@linux-node1 conf]# cd /usr/local/nginx/html/
+[root@linux-node1 html]# vim info.php
+<?php
+    phpinfo();
+?>
+
+ 
+
+QQ截图20190104152228.png
+
+ MySQL 生产部署
+    mysql的安装除了yum，还可以源码编译，其实如果你没有完全掌握源码编译的优化选项，选择官方编译好的二进制版本也是不错的选择。
+下载mysql二进制包
+[root@linux-node1 ~]# cd /usr/local/src
+# wget https://dev.mysql.com/get/Downloads/MySQL-5.6/mysql-5.6.37-linux-glibc2.12-x86_64.tar.gz
+ 
+ 
+ 
+创建mysql用户
+[root@linux-node1 ~]# groupadd mysql
+[root@linux-node1 ~]# useradd -r -g mysql -s /bin/false mysql
+
+解压mysql二进制包
+[root@linux-node1 ~]# cd /usr/local/src
+[root@linux-node1 src]# tar zxf mysql-5.6.37-linux-glibc2.12-x86_64.tar.gz 
+[root@linux-node1 src]# mv mysql-5.6.30-linux-glibc2.5-x86_64 /usr/local/
+[root@linux-node1 ~]# chown -R mysql:mysql /usr/local/mysql-5.6.30-linux-glibc2.5-x86_64
+
+
+
+初始化mysql
+[root@linux-node1 ~]# ln -s /usr/local/mysql-5.6.30-linux-glibc2.5-x86_64/ /usr/local/mysql
+[root@linux-node1 ~]# chown -R mysql:mysql /usr/local/mysql
+[root@linux-node1 ~]# /usr/local/mysql/scripts/mysql_install_db \
+--defaults-file=/usr/local/mysql/my.cnf \
+--user=mysql --basedir=/usr/local/mysql/ \
+--datadir=/usr/local/mysql/data
+
+启动mysql
+[root@linux-node1 src]# /usr/local/mysql/bin/mysqld_safe --defaults-file=/usr/local/mysql/my.cnf &
+
+
+
+ 
+PHP安装PDO MySQL扩展
+    要让PHP连接到MySQL。可以使用PDO扩展，安装PDO扩展和安装其它PHP模块的方法都是类似的，分为三个步骤：
+第一步：安装PDO扩展：
+[root@linux-node1 ~]# cd /usr/local/src/php-5.6.21/ext/pdo_mysql/
+phpize是用来扩展php扩展模块的，通过phpize可以建立php的外挂模块
+[root@linux-node1 pdo_mysql]# /usr/local/php/bin/phpize
+Configuring for:
+PHP Api Version:         20131106
+Zend Module Api No:      20131226
+Zend Extension Api No:   220131226 
+[root@linux-node1 pdo_mysql]# ./configure --with-php-config=/usr/local/php/bin/php-config
+[root@linux-node1 pdo_mysql]# make && make install
+执行完毕，最后会输出讲扩展安装到的位置，
+# ls /usr/local/php-5.6.21/lib/php/extensions/no-debug-non-zts-20131226/
+opcache.a  opcache.so  pdo_mysql.so
+
+第二步：修改配置文件
+[root@linux-node1 ~]# vim /usr/local/php/lib/php.ini
+#在文件末尾添加
+extension=pdo_mysql.so
+第三步：重新加载PHP（FPM）
+[root@linux-node1 ~]# /etc/init.d/php-fpm reload
+Reload service php-fpm  done
+ 
+ 使用mysqli连接数据库，所以需要给PHP安装该模块。
+[root@linux-node1 pdo_mysql]# cd /usr/local/src/php-5.6.39/ext/mysqli/
+[root@linux-node1 mysqli]# /usr/local/php/bin/phpize
+[root@linux-node1 mysqli]# ./configure --with-php-config=/usr/local/php/bin/php-config
+[root@linux-node1 mysqli]# make && make install
+
+[root@linux-node1 mysqli]# vim /usr/local/php/lib/php.ini
+#在最下面新添加一行
+extension=mysqli.so
+[root@linux-node1 mysqli]# /etc/init.d/php-fpm reload
+
+ 
+ 安装其他PHP模块均使用类似的方法。例如安装Redis、Memcached模块等。

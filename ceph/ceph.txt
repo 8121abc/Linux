@@ -1,0 +1,48 @@
+[root@NodeA ~]# ceph osd out 15
+marked out osd.15. 
+[root@NodeA ~]# ceph osd out 16
+marked out osd.16. 
+[root@NodeA ~]# ceph osd out 17
+marked out osd.17. 
+[root@NodeA ~]# ceph osd out 18
+marked out osd.18. 
+[root@NodeA ~]# ceph osd out 19
+marked out osd.19. 
+
+
+
+[root@NodeD ~]# systemctl stop ceph-osd@15.service
+[root@NodeD ~]# systemctl stop ceph-osd@16
+[root@NodeD ~]# systemctl stop ceph-osd@17
+[root@NodeD ~]# systemctl stop ceph-osd@18
+[root@NodeD ~]# systemctl stop ceph-osd@19
+
+
+[root@NodeA ~]# ceph osd crush remove osd.15
+removed item id 15 name 'osd.15' from crush map
+[root@NodeA ~]# ceph osd crush remove osd.16
+removed item id 16 name 'osd.16' from crush map
+[root@NodeA ~]# ceph osd crush remove osd.17
+removed item id 17 name 'osd.17' from crush map
+[root@NodeA ~]# ceph osd crush remove osd.18
+removed item id 18 name 'osd.18' from crush map
+[root@NodeA ~]# ceph osd crush remove osd.19
+removed item id 19 name 'osd.19' from crush map
+[root@NodeA ~]# ceph -s
+
+[root@NodeA ~]# ceph auth del osd.15
+updated
+[root@NodeA ~]# ceph auth del osd.16
+updated
+[root@NodeA ~]# ceph auth del osd.17
+updated
+[root@NodeA ~]# ceph auth del osd.18
+updated
+[root@NodeA ~]# ceph auth del osd.19
+updated
+
+
+
+ ceph osd rm 5 
+
+[root@ceph-1 ceph-config]# ceph-deploy --overwrite-conf config push ceph-1 \ ceph-2 ceph-3 

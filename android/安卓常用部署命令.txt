@@ -33,3 +33,15 @@
 	
 		链接：https://pan.baidu.com/s/1oSbIa2s1rQTZgsVpmoO12A 
 		提取码：nrc0
+
+安卓服务启动
+[root@7-20-ceph-osd-android-NodeD files]# ./vboxagent start
+start vbox agent .... SUCCESS
+[root@7-20-ceph-osd-android-NodeD files]# ./vboxagent status
+vbox agent is running, pid is 1350311
+[root@7-20-ceph-osd-android-NodeD files]# pwd
+/root/virtualbox-androidx86/roles/web/files
+[root@7-20-ceph-osd-android-NodeD files]# 
+
+c1b6d4b95ddff98c3624f2eff6259b7a  /tmp/vbox-androidx86.ova.game 安卓1024分辨率的镜像MD5
+5923d2e3b283ae94e73ac96573438768  /tmp/vbox-androidx86/role/admin/file/vbox-androidx86.ova 安卓非1024分辨率的镜像MD5
